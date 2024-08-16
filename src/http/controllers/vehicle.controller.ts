@@ -10,6 +10,12 @@ import { DeleteVehicleUseCase } from "../../application/use-cases/vehicle/delete
 import { formatVehicleResponse } from "../../application/use-cases/vehicle/utils/format-response.utils";
 import { Vehicle } from "../../domain/entities/vehicle";
 
+/**
+ * @swagger
+ * tags:
+ *   name: Vehicles
+ *   description: Operações relacionadas a veículos
+ */
 export class VehicleController {
     constructor (
         private readonly createVehicleUseCase: CreateVehicleUseCase,
@@ -19,6 +25,37 @@ export class VehicleController {
         private readonly deleteVehicleUseCase: DeleteVehicleUseCase
     ) {}
 
+    /**
+     * @swagger
+     * /vehicles:
+     *   get:
+     *     summary: Lista todos os veículos
+     *     tags: [Vehicles]
+     *     parameters:
+     *       - name: per_page
+     *         in: query
+     *         description: Número de veículos por página
+     *         required: false
+     *         schema:
+     *           type: integer
+     *           example: 10
+     *       - name: plate
+     *         in: query
+     *         description: Placa do veículo para filtrar
+     *         required: false
+     *         schema:
+     *           type: string
+     *           example: "MYJ-1414"
+     *     responses:
+     *       200:
+     *         description: Lista de veículos
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: array
+     *               items:
+     *                 $ref: '#/components/schemas/Vehicle'
+     */
     async getAll(request: Request, response: Response): Promise<Response> {
         const params = request.query;
 
@@ -31,6 +68,29 @@ export class VehicleController {
         return response.status(HttpStatus.OK).json(formatedResponse);
     }
 
+    /**
+     * @swagger
+     * /vehicles/{id}:
+     *   get:
+     *     summary: Retorna um veículo pelo ID
+     *     tags: [Vehicles]
+     *     parameters:
+     *       - name: id
+     *         in: path
+     *         required: true
+     *         description: ID do veículo
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: Detalhes do veículo
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Vehicle'
+     *       404:
+     *         description: Veículo não encontrado
+     */
     async findOneById(request: Request, response: Response): Promise<Response> {
         const vehicleId = request.params.id;
 
@@ -46,6 +106,28 @@ export class VehicleController {
         }
     }
 
+    /**
+     * @swagger
+     * /vehicles:
+     *   post:
+     *     summary: Cadastra um novo veículo
+     *     tags: [Vehicles]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/CreateVehicleDTO'
+     *     responses:
+     *       201:
+     *         description: Veículo cadastrado
+     *         content:
+     *           application/json:
+     *             schema:
+     *               $ref: '#/components/schemas/Vehicle'
+     *       400:
+     *         description: Erros no cadastro do veículo
+     */
     async create(request: Request, response: Response): Promise<Response> {
         const payload: CreateVehicleDto = request.body;
         
@@ -61,6 +143,33 @@ export class VehicleController {
         }
     }
 
+    /**
+     * @swagger
+     * /vehicles/{id}:
+     *   put:
+     *     summary: Atualiza um veículo
+     *     tags: [Vehicles]
+     *     parameters:
+     *       - name: id
+     *         in: path
+     *         required: true
+     *         description: ID do veículo
+     *         schema:
+     *           type: string
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/UpdateVehicleDTO'
+     *     responses:
+     *       204:
+     *         description: Veículo atualizado com sucesso
+     *       400:
+     *         description: Erros ao atualizar veículo
+     *       404:
+     *         description: Veículo não encontrado
+     */
     async update(request: Request, response: Response): Promise<Response> {
         const vehicleId = request.params.id;
 
@@ -84,6 +193,27 @@ export class VehicleController {
         }
     }
 
+     /**
+     * @swagger
+     * /vehicles/{id}:
+     *   delete:
+     *     summary: Remove um veículo pelo ID
+     *     tags: [Vehicles]
+     *     parameters:
+     *       - name: id
+     *         in: path
+     *         required: true
+     *         description: ID do veículo
+     *         schema:
+     *           type: string
+     *     responses:
+     *       204:
+     *         description: Veículo removido com sucesso
+     *       400:
+     *         description: Erro ao remover veículo
+     *       404:
+     *         description: Veículo não encontrado
+     */
     async delete(request: Request, response: Response): Promise<Response> {
         const vehicleId = request.params.id;
         

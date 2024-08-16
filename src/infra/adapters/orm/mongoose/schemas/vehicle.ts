@@ -3,6 +3,7 @@ import { Vehicle } from "../../../../../domain/entities/vehicle";
 
 const schema = new Schema<Vehicle>({
     model: { type: String, required: true },
+    make: { type: String, required: true },
     year:  { type: Number, required: true },
     color:  { type: String, required: true },
     plate:  { type: String, required: true },
