@@ -1,6 +1,5 @@
 import { IVehicleRepository } from "../../../domain/contracts/vehicles/create-vehicle.interface";
 import { Vehicle } from "../../../domain/entities/vehicle";
-import { formatVehicleResponse } from "./utils/format-response.utils";
 
 export class FindVehicleByIdUseCase {
     constructor(private vehicleRepository: IVehicleRepository) { }
@@ -12,6 +11,6 @@ export class FindVehicleByIdUseCase {
             throw new Error('Veículo não encontrado!');
         }
 
-        return formatVehicleResponse(vehicle);
+        return vehicle;
     }
 }

@@ -7,6 +7,8 @@ import { FindVehicleByIdUseCase } from "../../application/use-cases/vehicle/find
 import { UpdateVehicleDto } from "../dtos/vehicles/update-vehicle.dto";
 import { UpdateVehicleUseCase } from "../../application/use-cases/vehicle/update-vehicle.usecase";
 import { DeleteVehicleUseCase } from "../../application/use-cases/vehicle/delete-vehicle.usecase";
+import { formatVehicleResponse } from "../../application/use-cases/vehicle/utils/format-response.utils";
+import { Vehicle } from "../../domain/entities/vehicle";
 
 export class VehicleController {
     constructor (
@@ -22,7 +24,11 @@ export class VehicleController {
 
         const vehicles = await this.getAllVehiclesUseCase.execute(params); 
 
-        return response.status(HttpStatus.OK).json(vehicles);
+        const formatedResponse = vehicles.map((vehicle: Vehicle) => {
+            return formatVehicleResponse(vehicle);
+        });
+
+        return response.status(HttpStatus.OK).json(formatedResponse);
     }
 
     async findOneById(request: Request, response: Response): Promise<Response> {
@@ -30,13 +36,12 @@ export class VehicleController {
 
         try {
             const vehicle = await this.findVehicleByIdUseCase.execute(vehicleId); 
-    
-            return response.status(HttpStatus.OK).json(vehicle);
+
+            return response.status(HttpStatus.OK).json(formatVehicleResponse(vehicle));
         } 
         catch (error: any) {
-            return response.status(HttpStatus.BAD_REQUEST).json({
-                message: error.message || 'Erro inesperado',
-                error: error
+            return response.status(HttpStatus.NOT_FOUND).json({
+                message: error.message
             });
         }
     }
@@ -51,8 +56,7 @@ export class VehicleController {
         } 
         catch (error: any) {
             return response.status(HttpStatus.BAD_REQUEST).json({
-                message: error.message || 'Erro inesperado',
-                error: error
+                message: error.message || 'Erro inesperado'
             });
         }
     }
@@ -63,14 +67,19 @@ export class VehicleController {
         const payload: UpdateVehicleDto = request.body;
         
         try {
-            const vehicle = await this.updateVehicleUseCase.execute(vehicleId, payload);
+            await this.updateVehicleUseCase.execute(vehicleId, payload);
 
-            return response.status(HttpStatus.CREATED).json(vehicle);
+            return response.status(HttpStatus.NO_CONTENT).send();
         } 
         catch (error: any) {
-            return response.status(HttpStatus.BAD_REQUEST).json({
-                message: error.message || 'Erro inesperado',
-                error: error
+            let statusCode = HttpStatus.BAD_REQUEST;
+
+            if (error.message === "Veículo não encontrado!") {
+                statusCode = HttpStatus.NOT_FOUND;
+            } 
+
+            return response.status(statusCode).json({
+                message: error.message || 'Erro inesperado'
             });
         }
     }
@@ -81,12 +90,17 @@ export class VehicleController {
         try {
             await this.deleteVehicleUseCase.execute(vehicleId);
 
-            return response.status(HttpStatus.OK).json({ message: "Veículo deletado com sucesso." });
+            return response.status(HttpStatus.NO_CONTENT).send();
         } 
         catch (error: any) {
-            return response.status(HttpStatus.BAD_REQUEST).json({
-                message: error.message || 'Erro inesperado',
-                error: error
+            let statusCode = HttpStatus.BAD_REQUEST;
+
+            if (error.message === "Veículo não encontrado!") {
+                statusCode = HttpStatus.NOT_FOUND;
+            } 
+
+            return response.status(statusCode).json({
+                message: error.message
             });
         }
     }
