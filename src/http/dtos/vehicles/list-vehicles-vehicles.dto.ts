@@ -1,4 +1,5 @@
-import { IsInt, IsOptional, IsPositive, Min } from "class-validator";
+import { IsInt, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { TVehicle } from "../../../@types/vehicle";
 
 export class ListVehiclesDto {
     @IsOptional()
@@ -8,5 +9,12 @@ export class ListVehiclesDto {
     per_page?: number;
 
     @IsOptional()
+    @IsString({ message: 'O parâmetro plate deve ser uma string' })
     plate?: string;
+
+    @IsOptional()
+    sort_field?: keyof TVehicle;
+
+    @IsOptional()
+    sort_direction?: 'asc' | 'desc';
 }

@@ -6,6 +6,17 @@ export class GetAllVehiclesUseCase {
     constructor(private vehicleRepository: IVehicleRepository) {}
 
     async execute(params: ListVehiclesDto): Promise<Vehicle[]> {
-        return await this.vehicleRepository.getAll(params);
+        const { per_page, plate, sort_direction = 'asc', sort_field = 'createdAt' } = params;
+
+        const filters: Record<string, unknown> = {};
+        const sortOptions: Record<string, number> = {};
+
+        if (plate) {
+            filters.plate = { $regex: new RegExp(plate, 'i') };
+        }
+
+        sortOptions[sort_field] = sort_direction === 'asc' ? 1 : -1;
+
+        return await this.vehicleRepository.getAll(filters, per_page, sortOptions);
     }
 }

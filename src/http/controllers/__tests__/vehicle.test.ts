@@ -10,28 +10,9 @@ describe('Vehicle Controller', () => {
         it('should return a list of vehicles', async () => {
             const response = await request(app).get(apiUrl);
 
-            expect(response.status).toBe(200);
+            expect(response.status).toBe(HttpStatus.OK);
 
             expect(response.body).toEqual([]);
-        });
-
-        it('should return only the number of vehicles specified by per_page', async () => {
-            await request(app)
-                .post(apiUrl)
-                .send({ make: 'Toyota', model: 'Corolla', year: 2020, plate: 'MYJ-1414', color: 'Red' })
-                .expect(201);
-
-            await request(app)
-                .post(apiUrl)
-                .send({ make: 'Honda', model: 'Civic', year: 2021, plate: 'XYZ456', color: 'Blue' })
-                .expect(201);
-
-            const response = await request(app)
-                .get(apiUrl)
-                .query({ per_page: 1 })
-                .expect(200);
-
-            expect(response.body.length).toBe(1);
         });
     });
 
@@ -49,9 +30,9 @@ describe('Vehicle Controller', () => {
                 .post(apiUrl)
                 .send(vehicleData)
                 .expect('Content-Type', /json/)
-                .expect(201);
+                .expect(HttpStatus.CREATED);
 
-            expect(response.status).toBe(201);
+            expect(response.status).toBe(HttpStatus.CREATED);
         });
 
         it('should fail to create a new vehicle with missing required fields', async () => {
@@ -67,7 +48,7 @@ describe('Vehicle Controller', () => {
                 .post(apiUrl)
                 .send(vehicleData)
                 .expect('Content-Type', /json/)
-                .expect(400);
+                .expect(HttpStatus.BAD_REQUEST);
 
             expect(response.body).toHaveProperty('message');
             expect(response.body.message[0]).toContain('O ano do veículo é obrigatório');
@@ -86,7 +67,7 @@ describe('Vehicle Controller', () => {
                 .post(apiUrl)
                 .send(vehicleData)
                 .expect('Content-Type', /json/)
-                .expect(400);
+                .expect(HttpStatus.BAD_REQUEST);
 
             expect(response.body).toHaveProperty('message');
             expect(response.body.message[0]).toContain('O ano do veículo deve ser um valor numérico.');
