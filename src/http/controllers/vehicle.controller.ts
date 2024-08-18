@@ -47,6 +47,20 @@ export class VehicleController {
      *         schema:
      *           type: string
      *           example: "MYJ-1414"
+     *       - name: sort_field
+     *         in: query
+     *         description: Campo que deseja ordernar
+     *         required: false
+     *         schema:
+     *           type: string
+     *           example: "createdAt"
+     *       - name: sort_direction
+     *         in: query
+     *         description: Direção da ordenação
+     *         required: false
+     *         schema:
+     *           type: string
+     *           example: "asc"
      *     responses:
      *       200:
      *         description: Lista de veículos
