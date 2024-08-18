@@ -6,13 +6,13 @@ type PlainVehicle = Vehicle & { __v?: string | number };
 
 export function formatVehicleResponse(vehicle: PlainVehicle): Vehicle {
     if (!vehicle) {
-        return null;
+        return vehicle;
     }
     
     const plainVehicle = sanitizeResponse({
         ...vehicle,
         created_at_for_humans: formatDate(vehicle.createdAt) 
-    }, ['__v']);
+    }, ['__v']) as Vehicle;
 
     return plainVehicle;
 }

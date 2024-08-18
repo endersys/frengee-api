@@ -9,6 +9,7 @@ import { UpdateVehicleUseCase } from "../../application/use-cases/vehicle/update
 import { DeleteVehicleUseCase } from "../../application/use-cases/vehicle/delete-vehicle.usecase";
 import { formatVehicleResponse } from "../../application/use-cases/vehicle/utils/format-response.utils";
 import { Vehicle } from "../../domain/entities/vehicle";
+import { ListVehiclesDto } from "../dtos/vehicles/list-vehicles-vehicles.dto";
 
 /**
  * @swagger
@@ -57,13 +58,11 @@ export class VehicleController {
      *                 $ref: '#/components/schemas/Vehicle'
      */
     async getAll(request: Request, response: Response): Promise<Response> {
-        const params = request.query;
+        const params: ListVehiclesDto = request.query;
 
         const vehicles = await this.getAllVehiclesUseCase.execute(params); 
 
-        const formatedResponse = vehicles.map((vehicle: Vehicle) => {
-            return formatVehicleResponse(vehicle);
-        });
+        const formatedResponse = vehicles.map((vehicle: Vehicle) => formatVehicleResponse(vehicle));
 
         return response.status(HttpStatus.OK).json(formatedResponse);
     }
@@ -90,6 +89,8 @@ export class VehicleController {
      *               $ref: '#/components/schemas/Vehicle'
      *       404:
      *         description: Veículo não encontrado
+     *       400:
+     *         description: ID inválido
      */
     async findOneById(request: Request, response: Response): Promise<Response> {
         const vehicleId = request.params.id;
@@ -100,8 +101,14 @@ export class VehicleController {
             return response.status(HttpStatus.OK).json(formatVehicleResponse(vehicle));
         } 
         catch (error: any) {
-            return response.status(HttpStatus.NOT_FOUND).json({
-                message: error.message
+            let statusCode = HttpStatus.BAD_REQUEST;
+
+            if (error.message === "Veículo não encontrado!") {
+                statusCode = HttpStatus.NOT_FOUND;
+            } 
+
+            return response.status(statusCode).json({
+                message: error.message || 'Erro inesperado'
             });
         }
     }
@@ -210,7 +217,7 @@ export class VehicleController {
      *       204:
      *         description: Veículo removido com sucesso
      *       400:
-     *         description: Erro ao remover veículo
+     *         description: ID inválido
      *       404:
      *         description: Veículo não encontrado
      */
