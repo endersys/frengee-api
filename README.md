@@ -1,7 +1,7 @@
 
 # Frengee-API
 
-Essa API de Veículos é uma aplicação desenvolvida com Node.js, Express e MongoDB, projetada para facilitar o gerenciamento de veículos. O repositório inclui todo o código-fonte necessário e as configurações para Docker e Kubernetes, permitindo que a aplicação seja facilmente implantada e escalada em ambientes de contêineres.
+Essa API de Veículos é uma aplicação desenvolvida com Node.js, Express e MongoDB, projetada para facilitar o gerenciamento de veículos. O repositório inclui todo o código-fonte necessário e as configurações para Docker, permitindo que a aplicação seja facilmente implantada e escalada em ambientes de contêineres.
 
 ## Requisitos
 
