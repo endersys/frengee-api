@@ -60,6 +60,12 @@ Para rodar os testes, use o seguinte comando:
 npm test
 ```
 
+Obs: Caso tenha algum erro de autorização, execute o seguinte comando:
+
+```bash
+sudo chown -R $USER:$USER /diretorio-da-api
+```
+
 ### Documentação da API
 
 A documentação completa da API está disponível no endpoint **/api-docs** após iniciar a aplicação. A documentação é gerada automaticamente utilizando Swagger.
